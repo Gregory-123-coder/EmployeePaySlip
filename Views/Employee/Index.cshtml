@@ -1,0 +1,105 @@
+@model IEnumerable<EmployeePayslipApp.Models.Employee>
+@using System.Globalization
+
+@{
+    ViewData["Title"] = "Employee Payslip Summary";
+    var culture = new CultureInfo("en-IN");
+}
+
+<h2 class="text-center mb-4">Employee Payslip Summary</h2>
+
+<div class="text-end mb-3">
+    <a class="btn btn-success" asp-action="Create"><i class="bi bi-plus-circle"></i> Add New Employee</a>
+    <button id="toggleViewBtn" class="btn btn-secondary ms-2">Toggle View</button>
+</div>
+
+<!-- Table View -->
+<div id="tableView">
+    <table class="table table-bordered table-striped">
+        <thead class="table-dark text-center">
+            <tr>
+                <th>Name</th>
+                <th>Department</th>
+                <th>Basic Salary</th>
+                <th>HRA</th>
+                <th>DA</th>
+                <th>PF</th>
+                <th>Tax</th>
+                <th><strong>Gross Salary</strong></th>
+                <th>Deductions</th>
+                <th><strong>Net Salary</strong></th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody class="text-center">
+            @foreach (var emp in Model)
+            {
+                <tr>
+                    <td>@emp.Name</td>
+                    <td>@emp.Department</td>
+                    <td>@string.Format(culture, "{0:C}", emp.BasicSalary)</td>
+                    <td>@string.Format(culture, "{0:C}", emp.Payslip?.HRA)</td>
+                    <td>@string.Format(culture, "{0:C}", emp.Payslip?.DA)</td>
+                    <td>@string.Format(culture, "{0:C}", emp.Payslip?.PF)</td>
+                    <td>@string.Format(culture, "{0:C}", emp.Payslip?.Tax)</td>
+                    <td><strong>@string.Format(culture, "{0:C}", emp.Payslip?.GrossSalary)</strong></td>
+                    <td>@string.Format(culture, "{0:C}", emp.Payslip?.Deductions)</td>
+                    <td><strong>@string.Format(culture, "{0:C}", emp.Payslip?.NetSalary)</strong></td>
+                    <td>
+                        <a class="btn btn-sm btn-primary" asp-action="Edit" asp-route-id="@emp.Id">
+                            <i class="bi bi-pencil-fill"></i> Edit
+                        </a>
+                        <a class="btn btn-sm btn-danger" asp-action="Delete" asp-route-id="@emp.Id">
+                            <i class="bi bi-trash"></i> Delete
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<!-- Card View (toggle optional) -->
+<div id="cardView" style="display:none;">
+    <div class="row">
+        @foreach (var emp in Model)
+        {
+            <div class="col-md-4">
+                <div class="card mb-3 border-primary">
+                    <div class="card-header bg-primary text-white">
+                        @emp.Name (@emp.Department)
+                    </div>
+                    <div class="card-body">
+                        <p><strong>Basic Salary:</strong> @string.Format(culture, "{0:C}", emp.BasicSalary)</p>
+                        <p><strong>HRA:</strong> @string.Format(culture, "{0:C}", emp.Payslip?.HRA)</p>
+                        <p><strong>DA:</strong> @string.Format(culture, "{0:C}", emp.Payslip?.DA)</p>
+                        <p><strong>PF:</strong> @string.Format(culture, "{0:C}", emp.Payslip?.PF)</p>
+                        <p><strong>Tax:</strong> @string.Format(culture, "{0:C}", emp.Payslip?.Tax)</p>
+                        <p><strong>Gross Salary:</strong> @string.Format(culture, "{0:C}", emp.Payslip?.GrossSalary)</p>
+                        <p><strong>Deductions:</strong> @string.Format(culture, "{0:C}", emp.Payslip?.Deductions)</p>
+                        <p><strong>Net Salary:</strong> @string.Format(culture, "{0:C}", emp.Payslip?.NetSalary)</p>
+                        <a class="btn btn-sm btn-warning" asp-action="Edit" asp-route-id="@emp.Id">Edit</a>
+                        <a class="btn btn-sm btn-danger" asp-action="Delete" asp-route-id="@emp.Id">Delete</a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.getElementById("toggleViewBtn").addEventListener("click", function () {
+            var tableView = document.getElementById("tableView");
+            var cardView = document.getElementById("cardView");
+
+            if (tableView.style.display === "none") {
+                tableView.style.display = "block";
+                cardView.style.display = "none";
+            } else {
+                tableView.style.display = "none";
+                cardView.style.display = "block";
+            }
+        });
+    </script>
+}
