@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: employee-payslip-app   # change to whatever name you want
+    runtime: docker
+    repo: https://github.com/YourUser/YourRepoName   # replace with your repo URL
+    plan: free
+    region: oregon
+    branch: main
+    dockerfilePath: Dockerfile
+    autoDeploy: true
