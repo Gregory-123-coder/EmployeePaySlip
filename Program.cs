@@ -14,6 +14,23 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 var app = builder.Build();
 
+// Run pending migrations automatically on startup
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    try
+    {
+        var db = services.GetRequiredService<AppDbContext>();
+        db.Database.Migrate(); // applies any pending migrations
+    }
+    catch (Exception ex)
+    {
+        var logger = services.GetRequiredService<ILogger<Program>>();
+        logger.LogError(ex, "An error occurred while applying the database migrations.");
+        throw;
+    }
+}
+
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
@@ -22,6 +39,7 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
+
 app.UseRouting();
 app.UseAuthorization();
 
